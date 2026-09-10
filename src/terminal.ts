@@ -36,9 +36,11 @@ const link = (label: string, target: string) =>
 const pageLink = (icon: string, command: CommandName) =>
   `${icon}  ${link(command, `command://${command}`)}`;
 
-const BANNER = String.raw`▀▀█▀▀ ─▀─ █▀▀█ █▀▀▄ █─█ ─▀─ █▀▀█ █▀▀▄ █▀▀▀ 　 ░█▀▀█ █──█ █▀▀█ ─▀─ 
-─░█── ▀█▀ █▄▄█ █──█ ▄▀▄ ▀█▀ █▄▄█ █──█ █─▀█ 　 ░█─── █▀▀█ █▄▄█ ▀█▀ 
-─░█── ▀▀▀ ───▀ ───▀ ──▀ ▀▀▀ ───▀ ───▀ ▀▀▀▀ 　 ░█▄▄█ ───▀ ───▀ ▀▀▀`;
+const BANNER = String.raw`█████ █████   █   █   █ █   █ █████   █   █   █  ████    ████ █   █   █   █████ 
+  █     █   █   █ ██  █  █ █    █   █   █ ██  █ █       █     █   █ █   █   █   
+  █     █   █████ █ █ █   █     █   █████ █ █ █ █  ██   █     █████ █████   █   
+  █     █   █   █ █  ██  █ █    █   █   █ █  ██ █   █   █     █   █ █   █   █   
+  █   █████ █   █ █   █ █   █ █████ █   █ █   █  ████    ████ █   █ █   █ █████ `;
 
 const heading = (title: string) => fg(62, bold(title));
 
