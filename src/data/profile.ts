@@ -94,19 +94,26 @@ export const profile = {
       ],
     },
     {
-      name: "[PROJECT NAME 3]",
-      technology: "[TECHNOLOGY 1]",
+      name: "企业级Ragent电商平台智能体问答引擎",
+      technology: "SpringBoot、MyBatis Plus、PgVector、Redis、Redisson、Tika、Sa-Token、RAGAS、MCP等",
       summary:
-        "[A short summary of an earlier project and the most important lesson from it.]",
-      responsibility: ["[RESPONSIBILITY 1]"],
+        "Ragent 是基于 Java17 + SpringBoot 3 构建的企业级 RAG 系统，解决企业知识库检索与智能问答场景中的信息孤岛和效率提升问题。提供多路检索引擎、意图识别、问题重写、会话记忆、MCP 工具调用等核心能力。系统采用多模型路由与熔断降级机制，支持高并发场景下的稳定服务。通过分布式队列限流和全链路追踪，保障系统在并发下的可用性与可观测性。",
+      responsibility: ["基于 LLM 构建意图识别树，覆盖知识库问答、工具调用(MCP)、系统指令意图，低置信度时自动触发澄清反问，意图识别 Top-1 准确率达 90%+",
+"基于 LLM 实现问题重写与子问题拆分，支持多轮对话上下文补全与复杂问题并行子查询，结合术语归一化与规则兜底，Recall@1 提升 18.8%",
+"集成 MCP 协议扩展工具调用能力，基于意图识别路由工具、LLM 自动提取参数，支持多工具并行调用，打通知识检索与外部系统",
+"基于 Redis 信号量 + ZSET + Pub/Sub 实现分布式排队限流，Lua 脚本保证原子性，支持公平排队与超时拒绝，SSE 实时推送队列状态",
+"搭建基于 RAGAS 的端到端 RAG 评测体系，覆盖检索、延迟、回答质量三大维度共 20+ 指标，支持 A/B Diff 对比与人工校正，驱动答案忠诚度（faithfulness）+10.3%、答案相关性 +8.0% 等关键指标持续迭代",
+"基于自研轻量级链路追踪，自动采集 traceId、span 耗时、入参出参与异常堆栈，异步场景结合 TTL 透传保证链路不断裂，trace 数据异步落库支撑性能定位",
+"在 framework 层实现双维度幂等机制，通过注解防止用户重复提交表单，支持 SpEL 表达式生成唯一 Key，配合 Redis 实现分布式幂等控制",
+"基于 Apache Tika 实现 PDF / Word / Excel / Markdown 多格式解析，配合固定窗口 + 滑动重叠 + 结构感知多种分块策略与元数据增强，保留语义完整性提升召回质量"],
     },
   ] as ProjectItem[],
   awards: [
     { title: "浙江大学2024年PAT甲级程序设计一等奖" },
+    { title: "2023年度国家级大学生创新创业训练计划项目“疲劳驾驶异常检测关键技术研究”项目验收通过" },
     { title: "郑州大学2022-2023学年度优秀学生奖学金二等奖" },
     { title: "郑州大学2021-2022学年度优秀学生奖学金二等奖" },
     { title: "郑州大学2021-2022学年度计算机与人工智能学院三好学生" },
-    { title: "" },
   ] as AwardItem[],
   notes: [
     {
