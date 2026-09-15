@@ -44,7 +44,7 @@ const notesDirectoriesPlugin = (): Plugin => {
         return undefined;
       }
 
-      const directories = await collectDirectories(notesRoot);
+      const directories = await collectDirectories(notesRoot).catch(() => []);
       return `export const directoryPaths = ${JSON.stringify(directories)};`;
     },
     configureServer(server) {
