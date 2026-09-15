@@ -1,3 +1,4 @@
+import { listNoteDirectory } from "./notes_setting";
 import { profile } from "./data/profile";
 
 export const COMMANDS = ["index", "bio", "project", "award", "note"] as const;
@@ -51,7 +52,6 @@ const renderHome = () =>
   [
     `${fg(62, bold(profile.name))}  ${dim(profile.email)}`,
     inkBlue(HOME_DIVIDER),
-    "",
     black(BANNER),
     "",
     `${bold(profile.role)} · ${fg(240, dashedUnderline(profile.organization))}`,
@@ -65,7 +65,7 @@ const renderHome = () =>
     italic(profile.headline),
     "",
     "  • This page doubles as an interactive shell.",
-    `    Available commands: ${underline("index")}, ${underline("bio")}, ${underline("project")}, ${underline("award")}, ${underline("note")}.`,
+    "    Available commands: index, bio, project, award, note.",
     "",
     `Last update: ${profile.lastUpdated}`,
   ].join("\n");
@@ -97,19 +97,29 @@ const renderAwards = () =>
     ...profile.awards.map((award) => black(bold(`• ${award.title}`))),
   ].join("\n");
 
-const renderNotes = () =>
-  [
+const renderNotes = (directory = "") => {
+  const listing = listNoteDirectory(directory);
+  const numberWidth = String(listing.files.length).length;
+
+  return [
     heading("NOTES"),
     "",
-    ...profile.notes.flatMap((note) => [
-      `${fg(62, bold(note.title))}  ${dim(note.date)}`,
-      `   ${dim("Tags:")} ${note.tags}`,
-      `   ${note.summary}`,
-      "",
-    ]),
+    ...listing.directories.map((entry) => black(`📁  ${entry.name}`)),
+    ...listing.files.map((entry) =>
+      black(`${String(entry.number).padStart(numberWidth)}. ${entry.name}`),
+    ),
+    "",
+    "  • Use ls to list all notes.",
+    "    Use cd <folder> to enter a folder and cd .. to go up.",
+    "    Use cat <number> or cat <filename> to read a note in the terminal.",
+    "    Use read <number> or read <filename> to read a note with the document reader.",
   ].join("\n");
+};
 
-export const getPageOutput = (page: CommandName): string => {
+
+export const getNoteOutput = (name: string, content: string): string =>
+  [fg(62, bold(name)), "", content.trimEnd()].join("\n");
+export const getPageOutput = (page: CommandName, noteDirectory = ""): string => {
   switch (page) {
     case "bio":
       return renderBio();
@@ -118,15 +128,21 @@ export const getPageOutput = (page: CommandName): string => {
     case "award":
       return renderAwards();
     case "note":
-      return renderNotes();
+      return renderNotes(noteDirectory);
     case "index":
     default:
       return renderHome();
   }
 };
 
-export const getPrompt = (page: CommandName): string => {
-  const path = page === "index" ? "/" : `/${page}`;
+export const getPrompt = (page: CommandName, noteDirectory = ""): string => {
+  const path =
+    page === "index"
+      ? "/"
+      : page === "note" && noteDirectory
+        ? `/note/${noteDirectory}`
+        : `/${page}`;
+
   return `${fg(62, bold(profile.handle))}:${fg(33, path)}${dim("$")} `;
 };
 

@@ -93,35 +93,201 @@ textarea {
   border-radius: inherit;
 }
 
-.terminal-host .xterm {
+.terminal-surface {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.terminal-surface .xterm {
   height: 100%;
   padding: 18px 18px 12px;
 }
 
 
-.terminal-host .xterm-viewport {
+.terminal-surface .xterm-viewport {
   background: transparent !important;
   scrollbar-color: rgba(46, 51, 56, 0.22) transparent;
   scrollbar-width: thin;
 }
 
-.terminal-host .xterm-viewport::-webkit-scrollbar {
+.terminal-surface .xterm-viewport::-webkit-scrollbar {
   width: 8px;
 }
 
-.terminal-host .xterm-viewport::-webkit-scrollbar-track {
+.terminal-surface .xterm-viewport::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.terminal-host .xterm-viewport::-webkit-scrollbar-thumb {
+.terminal-surface .xterm-viewport::-webkit-scrollbar-thumb {
   background: rgba(46, 51, 56, 0.2);
   border: 2px solid transparent;
   border-radius: 999px;
   background-clip: padding-box;
 }
 
-.terminal-host .xterm-screen {
+.terminal-surface .xterm-screen {
   padding-right: 4px;
+}
+
+.note-viewer {
+  position: absolute;
+  z-index: 10;
+  inset: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #2e3338;
+  background: #fafafa;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  box-shadow: 0 12px 34px rgba(46, 51, 56, 0.14);
+}
+
+.note-viewer__toolbar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #d0d7de;
+  font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+}
+
+.note-viewer__toolbar strong {
+  overflow: hidden;
+  font-size: 15px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note-viewer__toolbar button {
+  padding: 4px 10px;
+  color: #2e3338;
+  cursor: pointer;
+  background: #ffffff;
+  border: 1px solid #d0d7de;
+  border-radius: 5px;
+}
+
+.note-viewer__toolbar button:hover {
+  background: #f0f3f6;
+}
+
+.note-viewer__content {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 20px 24px 32px;
+  overflow: auto;
+  font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.note-viewer__content h1 {
+  margin: 0.2em 0 0.7em;
+  font-size: 2em;
+  line-height: 1.25;
+}
+
+.note-viewer__content h2 {
+  margin: 1.2em 0 0.6em;
+  font-size: 1.55em;
+  line-height: 1.3;
+}
+
+.note-viewer__content h3 {
+  margin: 1.1em 0 0.5em;
+  font-size: 1.3em;
+}
+
+.note-viewer__content h4 {
+  margin: 1em 0 0.45em;
+  font-size: 1.12em;
+}
+
+.note-viewer__content h5,
+.note-viewer__content h6 {
+  margin: 0.9em 0 0.4em;
+  font-size: 1em;
+}
+
+.note-viewer__content p {
+  margin: 0 0 0.9em;
+}
+
+.note-viewer__content ul,
+.note-viewer__content ol {
+  margin: 0.4em 0 1em;
+  padding-left: 1.8em;
+}
+
+.note-viewer__content blockquote {
+  margin: 0.6em 0 1em;
+  padding: 0.2em 0 0.2em 1em;
+  color: #59636e;
+  border-left: 4px solid #d0d7de;
+}
+
+.note-viewer__content pre {
+  padding: 12px 14px;
+  overflow: auto;
+  font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+  font-size: 0.9em;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  background: #f3f5f7;
+  border-radius: 6px;
+}
+
+.note-viewer__content code {
+  font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+}
+
+.note-viewer__content :not(pre) > code {
+  padding: 0.12em 0.32em;
+  background: #eef1f4;
+  border-radius: 4px;
+}
+
+.note-viewer__content table {
+  width: 100%;
+  margin: 0.8em 0 1.2em;
+  border-collapse: collapse;
+}
+
+.note-viewer__content th,
+.note-viewer__content td {
+  padding: 7px 10px;
+  text-align: left;
+  border: 1px solid #d0d7de;
+}
+
+.note-viewer__content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.note-viewer__content .note-plain {
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  white-space: pre-wrap;
+  background: transparent;
+}
+
+.note-viewer__content a {
+  color: #0969da;
+}
+
+.note-viewer__content .note-pdf {
+  display: block;
+  width: 100%;
+  height: calc(100vh - 170px);
+  min-height: 520px;
+  border: 0;
 }
 
 @media (max-width: 640px) {
@@ -136,9 +302,21 @@ textarea {
     box-shadow: none;
   }
 
-  .terminal-host .xterm {
+  .terminal-surface .xterm {
     padding: 10px 10px 6px;
     font-size: 13px !important;
+  }
+
+  .note-viewer {
+    inset: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .note-viewer__content {
+    padding: 16px 16px 24px;
+    font-size: 15px;
   }
 
   .terminal-host::before {
@@ -152,7 +330,7 @@ textarea {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .terminal-host .xterm-cursor-blink {
+  .terminal-surface .xterm-cursor-blink {
     animation: none !important;
   }
 }

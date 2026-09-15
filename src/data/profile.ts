@@ -15,12 +15,6 @@ export type AwardItem = {
   title: string;
 };
 
-export type NoteItem = {
-  title: string;
-  date: string;
-  tags: string;
-  summary: string;
-};
 
 export type Profile = typeof profile;
 
@@ -115,28 +109,5 @@ export const profile = {
     { title: "郑州大学2021-2022学年度优秀学生奖学金二等奖" },
     { title: "郑州大学2021-2022学年度计算机与人工智能学院三好学生" },
   ] as AwardItem[],
-  notes: [
-    {
-      title: "[NOTE TITLE 1]",
-      date: "[YYYY-MM-DD]",
-      tags: "[TAG 1], [TAG 2]",
-      summary:
-        "[A short summary of the note and why it may be useful to a reader.]",
-    },
-    {
-      title: "[NOTE TITLE 2]",
-      date: "[YYYY-MM-DD]",
-      tags: "[TAG 1], [TAG 2]",
-      summary:
-        "[A short summary of the note and why it may be useful to a reader.]",
-    },
-    {
-      title: "[NOTE TITLE 3]",
-      date: "[YYYY-MM-DD]",
-      tags: "[TAG 1], [TAG 2]",
-      summary:
-        "[A short summary of the note and why it may be useful to a reader.]",
-    },
-  ] as NoteItem[],
   lastUpdated: "Thursday 10 Sept 2026",
 };
