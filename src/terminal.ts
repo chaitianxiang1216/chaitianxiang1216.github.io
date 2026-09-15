@@ -106,7 +106,7 @@ const renderNotes = (directory = "") => {
     "",
     ...listing.directories.map((entry) => black(`📁  ${entry.name}`)),
     ...listing.files.map((entry) =>
-      black(`${String(entry.number).padStart(numberWidth)}. ${entry.name}`),
+      black(`📄  ${String(entry.number).padStart(numberWidth)}. ${entry.name}`),
     ),
     "",
     "  • Use ls to list all notes.",
