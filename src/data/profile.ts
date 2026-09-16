@@ -29,7 +29,7 @@ export const profile = {
   contactLabel: "Room 0b00010010 E,East Point City",
   location: "Hong Kong,China",
   headline:
-    "I own the natural passion for Artificial Intelligence",
+    "I own the natural passion for Artificial Intelligence.I'm currently developing two personal AI digital avatars for my homepage — ask them anything about me, and they'll help you discover a more well-rounded side of who I am. One is powered by RAG, the other by a locally trained model. Coming soon.",
   bio: [
     "",
     "",
