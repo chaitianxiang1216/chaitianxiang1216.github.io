@@ -2,7 +2,8 @@ import { listNoteDirectory } from "./notes_setting";
 import { profile } from "./data/profile";
 
 export const COMMANDS = ["index", "bio", "project", "award", "note"] as const;
-export type CommandName = (typeof COMMANDS)[number];
+const PAGE_COMMANDS = [...COMMANDS, "tachyon"] as const;
+export type CommandName = (typeof PAGE_COMMANDS)[number];
 
 const ESC = "\x1b[";
 const RESET = `${ESC}0m`;
@@ -44,6 +45,51 @@ const BANNER = String.raw`█████ █████   █   █   █ █ 
   █   █████ █   █ █   █ █   █ █████ █   █ █   █  ████    ████ █   █ █   █ █████ `;
 
 const heading = (title: string) => fg(62, bold(title));
+const tachyonBlue = (value: string) =>
+  `${ESC}38;2;37;99;235m${value}${RESET}`;
+const tachyonCyan = (value: string) =>
+  `${ESC}38;2;34;211;238m${value}${RESET}`;
+const tachyonViolet = (value: string) =>
+  `${ESC}38;2;124;58;237m${value}${RESET}`;
+
+export const TACHYON_RESPONSE =
+  "Tachyon is currently in internal testing. Please check back soon.";
+
+export type TachyonMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+const TACHYON_BOX_WIDTH = 62;
+const tachyonBoxLine = (content: string) =>
+  `${tachyonBlue("│")} ${content.padEnd(TACHYON_BOX_WIDTH - 2)} ${tachyonBlue("│")}`;
+
+const TACHYON_ICON = [
+  `${tachyonBlue("  ◆◆◆  ")}  ${tachyonBlue(bold("Tachyon"))}`,
+  `${tachyonBlue(" ◆")}${tachyonViolet(" ✦ ")}${tachyonBlue("◆ ")}  ${dim("AI digital avatar")}`,
+  `${tachyonCyan("  ◆◆◆  ")}  ${dim("Internal preview")}`,
+].join("\n");
+
+const renderTachyon = (messages: TachyonMessage[] = []) =>
+  [
+    TACHYON_ICON,
+    "",
+    tachyonBlue(`╭${"─".repeat(TACHYON_BOX_WIDTH)}╮`),
+    tachyonBoxLine("✦ Welcome to Tachyon"),
+    tachyonBoxLine("  Ask me anything."),
+    tachyonBoxLine("  The service is currently in internal preview."),
+    tachyonBlue(`╰${"─".repeat(TACHYON_BOX_WIDTH)}╯`),
+    "",
+    ...messages.flatMap((message) =>
+      message.role === "user"
+        ? [`${tachyonBlue(bold("›"))} ${message.content}`, ""]
+        : [
+            `${tachyonCyan("✦")} ${tachyonBlue(bold("Tachyon"))}`,
+            `  ${message.content}`,
+            "",
+          ],
+    ),
+  ].join("\n");
 
 const HOME_HEADER = `${profile.name}  ${profile.email}`;
 const HOME_DIVIDER = "─".repeat(displayWidth(HOME_HEADER) + 2);
@@ -119,7 +165,11 @@ const renderNotes = (directory = "") => {
 
 export const getNoteOutput = (name: string, content: string): string =>
   [fg(62, bold(name)), "", content.trimEnd()].join("\n");
-export const getPageOutput = (page: CommandName, noteDirectory = ""): string => {
+export const getPageOutput = (
+  page: CommandName,
+  noteDirectory = "",
+  tachyonMessages: TachyonMessage[] = [],
+): string => {
   switch (page) {
     case "bio":
       return renderBio();
@@ -129,6 +179,8 @@ export const getPageOutput = (page: CommandName, noteDirectory = ""): string => 
       return renderAwards();
     case "note":
       return renderNotes(noteDirectory);
+    case "tachyon":
+      return renderTachyon(tachyonMessages);
     case "index":
     default:
       return renderHome();
@@ -136,6 +188,10 @@ export const getPageOutput = (page: CommandName, noteDirectory = ""): string => 
 };
 
 export const getPrompt = (page: CommandName, noteDirectory = ""): string => {
+  if (page === "tachyon") {
+    return `${tachyonBlue(bold("tachyon"))}${dim(">")} `;
+  }
+
   const path =
     page === "index"
       ? "/"
@@ -157,5 +213,5 @@ export const getCommandHint = (value: string): string | null => {
 };
 
 export const isCommand = (value: string): value is CommandName =>
-  COMMANDS.includes(value as CommandName);
+  PAGE_COMMANDS.includes(value as CommandName);
 

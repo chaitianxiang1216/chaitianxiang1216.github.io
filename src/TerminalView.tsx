@@ -16,10 +16,19 @@ import {
   getPageTitle,
   getPrompt,
   isCommand,
+  TACHYON_RESPONSE,
+  type TachyonMessage,
   type CommandName,
 } from "./terminal";
 
 const CLEAR_SCREEN = "\x1b[2J\x1b[3J\x1b[H";
+
+const getCellWidth = (value: string): number =>
+  /[\u1100-\u115f\u2e80-\ua4cf\uac00-\ud7a3\uf900-\ufaff\ufe10-\ufe19\ufe30-\ufe6f\uff00-\uff60\uffe0-\uffe6]/u.test(
+    value,
+  )
+    ? 2
+    : 1;
 
 const getInitialPage = (): CommandName => {
   const hash = window.location.hash.replace(/^#\/?/, "").toLowerCase();
@@ -133,6 +142,7 @@ export function TerminalView() {
 
     let page = getInitialPage();
     let noteDirectory = "";
+    let tachyonMessages: TachyonMessage[] = [];
     let input = "";
     let historyIndex = 0;
     const history: string[] = [];
@@ -163,13 +173,35 @@ export function TerminalView() {
     };
 
     const replaceInput = (nextInput: string) => {
-      terminal.write("\b \b".repeat(input.length));
+      terminal.write("\r\x1b[2K");
+      terminal.write(getPrompt(page, noteDirectory));
+      terminal.write(nextInput);
       input = nextInput;
-      terminal.write(input);
+    };
+
+    const eraseLastCharacter = () => {
+      const characters = Array.from(input);
+      const lastCharacter = characters.pop();
+
+      if (!lastCharacter) {
+        return;
+      }
+
+      const width = getCellWidth(lastCharacter);
+      terminal.write(
+        `\x1b[${width}D${" ".repeat(width)}\x1b[${width}D`,
+      );
+      input = characters.join("");
     };
 
     const showPage = (nextPage: CommandName) => {
+      const previousPage = page;
       page = nextPage;
+
+      if (nextPage === "tachyon" && previousPage !== "tachyon") {
+        tachyonMessages = [];
+      }
+
       updatePageLineHeight(page);
       document.title = getPageTitle(page);
       window.history.replaceState(
@@ -178,7 +210,7 @@ export function TerminalView() {
         page === "index" ? window.location.pathname : `#${page}`,
       );
       terminal.write(CLEAR_SCREEN);
-      terminal.write(`${getPageOutput(page, noteDirectory)}\r\n\r\n`);
+      terminal.write(`${getPageOutput(page, noteDirectory, tachyonMessages)}\r\n\r\n`);
       writePrompt();
     };
 
@@ -237,7 +269,15 @@ export function TerminalView() {
       if (command === "clear") {
         history.length = 0;
         historyIndex = 0;
+        if (page === "tachyon") {
+          tachyonMessages = [];
+        }
         showPage(page);
+        return;
+      }
+
+      if (command === "tachyon") {
+        showPage("tachyon");
         return;
       }
 
@@ -290,6 +330,16 @@ export function TerminalView() {
         return;
       }
 
+      if (page === "tachyon") {
+        tachyonMessages = [
+          ...tachyonMessages,
+          { role: "user", content: rawCommand },
+          { role: "assistant", content: TACHYON_RESPONSE },
+        ];
+        showPage("tachyon");
+        return;
+      }
+
       showCommandNotFound(command);
     };
 
@@ -300,10 +350,7 @@ export function TerminalView() {
       }
 
       if (data === "\u007f") {
-        if (input.length > 0) {
-          input = input.slice(0, -1);
-          terminal.write("\b \b");
-        }
+        eraseLastCharacter();
         return;
       }
 
@@ -316,7 +363,7 @@ export function TerminalView() {
 
       if (data === "\x0c") {
         terminal.write(CLEAR_SCREEN);
-        terminal.write(`${getPageOutput(page, noteDirectory)}\r\n\r\n`);
+        terminal.write(`${getPageOutput(page, noteDirectory, tachyonMessages)}\r\n\r\n`);
         writePrompt();
         return;
       }
@@ -362,7 +409,7 @@ export function TerminalView() {
 
     updatePageLineHeight(page);
     terminal.write(CLEAR_SCREEN);
-    terminal.write(`${getPageOutput(page, noteDirectory)}\r\n\r\n`);
+    terminal.write(`${getPageOutput(page, noteDirectory, tachyonMessages)}\r\n\r\n`);
     writePrompt();
     document.title = getPageTitle(page);
     requestAnimationFrame(() => {
