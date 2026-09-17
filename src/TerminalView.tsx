@@ -234,6 +234,13 @@ export function TerminalView() {
         return;
       }
 
+      if (command === "clear") {
+        history.length = 0;
+        historyIndex = 0;
+        showPage(page);
+        return;
+      }
+
       history.push(rawCommand);
       historyIndex = history.length;
 
