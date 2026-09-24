@@ -47,10 +47,10 @@ const BANNER = String.raw`█████ █████   █   █   █ █ 
 const heading = (title: string) => fg(62, bold(title));
 const tachyonBlue = (value: string) =>
   `${ESC}38;2;37;99;235m${value}${RESET}`;
-const tachyonCyan = (value: string) =>
-  `${ESC}38;2;34;211;238m${value}${RESET}`;
 const tachyonViolet = (value: string) =>
   `${ESC}38;2;124;58;237m${value}${RESET}`;
+const tachyonCyan = (value: string) =>
+  `${ESC}38;2;34;211;238m${value}${RESET}`;
 
 export const TACHYON_RESPONSE =
   "Tachyon is currently in internal testing. Please check back soon.";
