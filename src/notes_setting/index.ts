@@ -257,6 +257,9 @@ export const resolveNoteDirectory = (
   return resolved === "" || directoryPaths.includes(resolved) ? resolved : undefined;
 };
 
+export const getNoteTitle = (note: NoteDocument): string =>
+  getDisplayName(getBaseName(note.name));
+
 export const getNoteByName = (name: string): NoteDocument | undefined => {
   const normalizedName = name.toLowerCase();
 

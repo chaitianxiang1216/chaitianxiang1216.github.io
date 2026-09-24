@@ -4,6 +4,7 @@ import { Terminal } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
 import {
   getNoteByReference,
+  getNoteTitle,
   readNoteHtml,
   readNoteText,
   resolveNoteDirectory,
@@ -232,13 +233,13 @@ export function TerminalView() {
           const html = await readNoteHtml(note);
           terminal.write(CLEAR_SCREEN);
           writePrompt();
-          setNoteView({ title: note.displayName, html });
+          setNoteView({ title: getNoteTitle(note), html });
           return;
         }
 
         const content = await readNoteText(note);
         terminal.write(CLEAR_SCREEN);
-        terminal.write(`${getNoteOutput(note.displayName, content)}\r\n\r\n`);
+        terminal.write(`${getNoteOutput(getNoteTitle(note), content)}\r\n\r\n`);
         writePrompt();
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unable to read file.";
