@@ -16,6 +16,8 @@ import {
   getPageOutput,
   getPageTitle,
   getPrompt,
+  getPromptParts,
+  getPromptText,
   isCommand,
   TACHYON_RESPONSE,
   type TachyonMessage,
@@ -30,6 +32,12 @@ const getCellWidth = (value: string): number =>
   )
     ? 2
     : 1;
+
+const getTextCellWidth = (value: string): number =>
+  Array.from(value).reduce(
+    (width, character) => width + getCellWidth(character),
+    0,
+  );
 
 const getInitialPage = (): CommandName => {
   const hash = window.location.hash.replace(/^#\/?/, "").toLowerCase();
@@ -169,13 +177,28 @@ export function TerminalView() {
       });
     };
 
+    const shouldWrapPrompt = () =>
+      getTextCellWidth(getPromptText(page, noteDirectory)) >
+      Math.floor(terminal.cols / 2);
+
     const writePrompt = () => {
-      terminal.write(getPrompt(page, noteDirectory), scrollToBottom);
+      const prompt = getPromptParts(page, noteDirectory);
+      terminal.write(
+        shouldWrapPrompt()
+          ? `${prompt.prefix}\r\n${prompt.suffix}`
+          : `${prompt.prefix}${prompt.suffix}`,
+        scrollToBottom,
+      );
     };
 
     const replaceInput = (nextInput: string) => {
       terminal.write("\r\x1b[2K");
-      terminal.write(getPrompt(page, noteDirectory));
+      const prompt = getPromptParts(page, noteDirectory);
+      if (shouldWrapPrompt()) {
+        terminal.write(prompt.suffix);
+      } else {
+        terminal.write(`${prompt.prefix}${prompt.suffix}`);
+      }
       terminal.write(nextInput);
       input = nextInput;
     };

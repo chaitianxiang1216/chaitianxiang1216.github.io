@@ -187,19 +187,39 @@ export const getPageOutput = (
   }
 };
 
-export const getPrompt = (page: CommandName, noteDirectory = ""): string => {
+const getPromptPath = (page: CommandName, noteDirectory = ""): string =>
+  page === "index"
+    ? "/"
+    : page === "note" && noteDirectory
+      ? `/note/${noteDirectory}`
+      : `/${page}`;
+
+export const getPromptText = (page: CommandName, noteDirectory = ""): string =>
+  page === "tachyon"
+    ? "tachyon> "
+    : `${profile.handle}:${getPromptPath(page, noteDirectory)}$ `;
+
+export const getPromptParts = (
+  page: CommandName,
+  noteDirectory = "",
+): { prefix: string; suffix: string } => {
   if (page === "tachyon") {
-    return `${tachyonBlue(bold("tachyon"))}${dim(">")} `;
+    return {
+      prefix: `${tachyonBlue(bold("tachyon"))}${dim(">")}`,
+      suffix: " ",
+    };
   }
 
-  const path =
-    page === "index"
-      ? "/"
-      : page === "note" && noteDirectory
-        ? `/note/${noteDirectory}`
-        : `/${page}`;
+  const path = getPromptPath(page, noteDirectory);
+  return {
+    prefix: `${fg(62, bold(profile.handle))}:${fg(33, path)}`,
+    suffix: `${dim("$")} `,
+  };
+};
 
-  return `${fg(62, bold(profile.handle))}:${fg(33, path)}${dim("$")} `;
+export const getPrompt = (page: CommandName, noteDirectory = ""): string => {
+  const prompt = getPromptParts(page, noteDirectory);
+  return `${prompt.prefix}${prompt.suffix}`;
 };
 
 export const getPageTitle = (page: CommandName): string =>
