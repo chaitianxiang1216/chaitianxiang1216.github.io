@@ -12,6 +12,7 @@ import {
 import {
   COMMANDS,
   getCommandHint,
+  getNoteDirectoryOutput,
   getNoteOutput,
   getPageOutput,
   getPageTitle,
@@ -53,15 +54,11 @@ export function TerminalView() {
   const hostRef = useRef<HTMLDivElement>(null);
   const surfaceRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<Terminal | null>(null);
-  const returnToNotesRef = useRef<(() => void) | null>(null);
   const [noteView, setNoteView] = useState<NoteViewState | null>(null);
 
   const closeNoteView = () => {
     setNoteView(null);
-    requestAnimationFrame(() => {
-      returnToNotesRef.current?.();
-      terminalRef.current?.focus();
-    });
+    requestAnimationFrame(() => terminalRef.current?.focus());
   };
 
   useEffect(() => {
@@ -238,8 +235,6 @@ export function TerminalView() {
       writePrompt();
     };
 
-    returnToNotesRef.current = () => showPage("note");
-
     const showNoteFile = async (reference: string, mode: "cat" | "read") => {
       const note = getNoteByReference(reference, noteDirectory);
 
@@ -254,15 +249,13 @@ export function TerminalView() {
       try {
         if (mode === "read") {
           const html = await readNoteHtml(note);
-          terminal.write(CLEAR_SCREEN);
           writePrompt();
           setNoteView({ title: getNoteTitle(note), html });
           return;
         }
 
         const content = await readNoteText(note);
-        terminal.write(CLEAR_SCREEN);
-        terminal.write(`${getNoteOutput(getNoteTitle(note), content)}\r\n\r\n`);
+        terminal.write(`${getNoteOutput(content)}\r\n\r\n`);
         writePrompt();
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unable to read file.";
@@ -326,7 +319,8 @@ export function TerminalView() {
         }
 
         if (/^ls\s*$/i.test(rawCommand)) {
-          showPage("note");
+          terminal.write(`${getNoteDirectoryOutput(noteDirectory)}\r\n\r\n`);
+          writePrompt();
           return;
         }
 
@@ -446,7 +440,6 @@ export function TerminalView() {
       resizeObserver.disconnect();
       window.removeEventListener("resize", onChange);
       terminalRef.current = null;
-      returnToNotesRef.current = null;
       terminal.dispose();
     };
   }, []);
