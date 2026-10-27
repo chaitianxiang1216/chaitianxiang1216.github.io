@@ -92,6 +92,7 @@ const renderTachyon = (messages: TachyonMessage[] = []) =>
   ].join("\n");
 
 const HOME_HEADER = `${profile.name}  ${profile.email}`;
+const LAST_UPDATED = import.meta.env.VITE_LAST_UPDATE ?? profile.lastUpdated;
 const HOME_DIVIDER = "─".repeat(displayWidth(HOME_HEADER) + 2);
 
 const renderHome = () =>
@@ -113,7 +114,7 @@ const renderHome = () =>
     "  • This page doubles as an interactive shell.",
     "    Available commands: index, bio, project, award, note.",
     "",
-    `Last update: ${profile.lastUpdated}`,
+    `Last update: ${LAST_UPDATED}`,
   ].join("\n");
 
 const renderBio = () => {

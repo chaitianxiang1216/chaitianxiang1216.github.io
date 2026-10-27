@@ -33,6 +33,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Set last update date
+        run: |
+          echo "VITE_LAST_UPDATE=$(TZ=Asia/Shanghai date +'%A %-d %b %Y' | sed 's/ Sep / Sept /')" >> "$GITHUB_ENV"
+
       - name: Build
         run: pnpm build
 
